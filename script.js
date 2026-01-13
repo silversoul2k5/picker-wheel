@@ -17,13 +17,13 @@ const RADIUS = SIZE / 2;
 
 const COLORS = ["#2f5d0a", "#6b7f1a", "#f2b705", "#fff1a8"];
 
-/* BIAS CONFIG */
+/* SECRET BIAS */
 const ARJUN_WEIGHT = 3;
 
+/* STATE */
 let items = ["YES", "NO", "YES", "NO", "YES", "NO", "YES", "NO"];
 let angle = 0;
 let spinning = false;
-let idleSpin = true;
 let lastSelectedIndex = null;
 
 /* DRAW */
@@ -89,7 +89,7 @@ function weightedPick() {
     i.toLowerCase() === "arjun" ? ARJUN_WEIGHT : 1
   );
 
-  const total = weights.reduce((a, b) => a + b, 0);
+  let total = weights.reduce((a, b) => a + b, 0);
   let r = Math.random() * total;
 
   for (let i = 0; i < weights.length; i++) {
@@ -99,39 +99,37 @@ function weightedPick() {
   return 0;
 }
 
-/* SPIN (CORRECT LANDING) */
+/* CLOCKWISE FAST SPIN */
 spinBtn.onclick = () => {
   if (spinning || items.length < 2) return;
   spinning = true;
-  idleSpin = false;
 
   const targetIndex = weightedPick();
   const slice = (Math.PI * 2) / items.length;
 
-  const extraRotations = Math.floor(Math.random() * 3) + 4; // 4–6 spins
-  const targetAngle =
+  const extraRotations = Math.floor(Math.random() * 4) + 6; // FAST spins
+  const finalAngle =
+    angle +
     extraRotations * Math.PI * 2 +
-    (Math.PI * 1.5 - (targetIndex + 0.5) * slice);
+    (Math.PI * 1.5 - (targetIndex + 0.5) * slice - angle % (Math.PI * 2));
 
   const startAngle = angle;
-  const duration = 4000;
+  const duration = 3200;
   const startTime = performance.now();
 
-  function easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
+  function easeOutExpo(t) {
+    return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
   }
 
   function animate(now) {
-    const elapsed = now - startTime;
-    const t = Math.min(elapsed / duration, 1);
-    angle = startAngle + (targetAngle - startAngle) * easeOutCubic(t);
+    const t = Math.min((now - startTime) / duration, 1);
+    angle = startAngle + (finalAngle - startAngle) * easeOutExpo(t);
     drawWheel();
 
     if (t < 1) {
       requestAnimationFrame(animate);
     } else {
       spinning = false;
-      idleSpin = true;
       lastSelectedIndex = targetIndex;
       showResult(items[targetIndex]);
     }
@@ -158,17 +156,7 @@ hideBtn.onclick = () => {
 
 doneBtn.onclick = () => overlay.classList.add("hidden");
 
-/* IDLE ROTATION */
-function idle() {
-  if (!spinning && idleSpin) {
-    angle += 0.002;
-    drawWheel();
-  }
-  requestAnimationFrame(idle);
-}
-
 /* INIT */
 renderList();
 drawWheel();
-idle();
 
