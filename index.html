@@ -7,19 +7,31 @@
 </head>
 <body>
 
-<header class="topbar">
-  <div class="logo">Picker Wheel</div>
-</header>
+<header class="topbar">Picker Wheel</header>
 
 <main class="container">
-  <!-- LEFT: WHEEL -->
+
+  <!-- WHEEL -->
   <section class="wheel-section">
     <canvas id="wheel" width="500" height="500"></canvas>
     <button id="spinBtn">SPIN</button>
   </section>
 
-  <!-- RIGHT: INPUT PANEL -->
+  <!-- INPUT PANEL -->
   <section class="panel">
     <h3>INPUTS</h3>
-    <textarea id="inputs"
+
+    <div class="input-row">
+      <input id="textInput" placeholder="Type and press Enter..." />
+      <button id="addBtn">+</button>
+    </div>
+
+    <ul id="itemList"></ul>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
 

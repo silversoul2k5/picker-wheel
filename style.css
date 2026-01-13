@@ -1,6 +1,6 @@
 * {
   box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: system-ui, sans-serif;
 }
 
 body {
@@ -10,7 +10,7 @@ body {
 
 .topbar {
   height: 56px;
-  background: #ffffff;
+  background: white;
   display: flex;
   align-items: center;
   padding: 0 20px;
@@ -33,7 +33,7 @@ body {
 }
 
 #wheel {
-  background: #fff;
+  background: white;
   border-radius: 50%;
 }
 
@@ -43,31 +43,55 @@ body {
   height: 90px;
   border-radius: 50%;
   background: #1e1e1e;
-  color: #fff;
-  font-weight: bold;
+  color: white;
   border: none;
+  font-weight: bold;
   cursor: pointer;
 }
 
-#spinBtn:hover {
-  background: #000;
-}
-
 .panel {
-  background: #fff;
+  background: white;
   border-radius: 12px;
   padding: 16px;
   display: flex;
   flex-direction: column;
 }
 
-.panel h3 {
-  margin: 0 0 10px;
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
-.panel textarea {
+.input-row input {
   flex: 1;
-  resize: none;
-  padding: 10px;
-  font-siz
+  padding: 8px;
+  font-size: 14px;
+}
+
+.input-row button {
+  width: 40px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#itemList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#itemList li {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+#itemList button {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+}
 
