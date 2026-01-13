@@ -8,7 +8,7 @@ body {
   background: #cfd7c4;
 }
 
-/* TOP BAR */
+/* HEADER */
 .topbar {
   height: 56px;
   background: white;
@@ -53,15 +53,8 @@ body {
   padding: 18px 24px;
 }
 
-.hero h1 {
-  margin: 0;
-  font-size: 24px;
-}
-
-.hero p {
-  margin: 4px 0 0;
-  font-size: 14px;
-}
+.hero h1 { margin: 0; font-size: 24px; }
+.hero p { margin: 4px 0 0; font-size: 14px; }
 
 /* LAYOUT */
 .container {
@@ -84,7 +77,6 @@ body {
   border-radius: 50%;
 }
 
-/* POINTER */
 .pointer {
   position: absolute;
   top: 6px;
@@ -94,7 +86,6 @@ body {
   z-index: 3;
 }
 
-/* SPIN BUTTON */
 #spinBtn {
   position: absolute;
   width: 90px;
@@ -120,7 +111,6 @@ body {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  max-height: 600px;
 }
 
 .panel-header {
@@ -145,8 +135,6 @@ body {
 .input-row input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
 }
 
 .input-row button {
@@ -159,7 +147,6 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
-  overflow-y: auto;
 }
 
 #itemList li {
@@ -167,14 +154,6 @@ body {
   justify-content: space-between;
   padding: 8px 10px;
   border-bottom: 1px solid #eee;
-  font-size: 14px;
-}
-
-#itemList button {
-  background: none;
-  border: none;
-  color: red;
-  cursor: pointer;
 }
 
 /* RESULT */
@@ -199,7 +178,6 @@ body {
 
 .result-box h1 {
   font-size: 48px;
-  margin: 0;
 }
 
 .buttons {
@@ -207,18 +185,5 @@ body {
   display: flex;
   gap: 12px;
   justify-content: center;
-}
-
-#hideBtn {
-  background: white;
-  border: 1px solid #aaa;
-  padding: 8px 16px;
-}
-
-#doneBtn {
-  background: #f2b705;
-  border: none;
-  padding: 8px 20px;
-  font-weight: bold;
 }
 
