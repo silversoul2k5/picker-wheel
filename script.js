@@ -5,6 +5,7 @@ const spinBtn = document.getElementById("spinBtn");
 const textInput = document.getElementById("textInput");
 const addBtn = document.getElementById("addBtn");
 const itemList = document.getElementById("itemList");
+const countEl = document.getElementById("count");
 
 const overlay = document.getElementById("resultOverlay");
 const resultText = document.getElementById("resultText");
@@ -14,19 +15,14 @@ const doneBtn = document.getElementById("doneBtn");
 const SIZE = canvas.width;
 const RADIUS = SIZE / 2;
 
-const COLORS = [
-  "#2f5d0a", // dark green
-  "#6b7f1a", // olive
-  "#f2b705", // yellow
-  "#fff1a8"  // light yellow
-];
+const COLORS = ["#2f5d0a", "#6b7f1a", "#f2b705", "#fff1a8"];
 
 let items = [];
 let angle = 0;
 let spinning = false;
 let lastSelectedIndex = null;
 
-/* ---------- DRAW WHEEL ---------- */
+/* DRAW WHEEL */
 function drawWheel() {
   ctx.clearRect(0, 0, SIZE, SIZE);
 
@@ -44,24 +40,30 @@ function drawWheel() {
     const start = angle + i * slice;
     const end = start + slice;
 
+    const color = COLORS[i % COLORS.length];
+
     ctx.beginPath();
     ctx.moveTo(RADIUS, RADIUS);
     ctx.arc(RADIUS, RADIUS, RADIUS, start, end);
-    ctx.fillStyle = COLORS[i % COLORS.length];
+    ctx.fillStyle = color;
     ctx.fill();
 
     ctx.save();
     ctx.translate(RADIUS, RADIUS);
     ctx.rotate(start + slice / 2);
     ctx.textAlign = "right";
-    ctx.fillStyle = "#000";
-    ctx.font = "16px system-ui";
+    ctx.font = "18px system-ui";
+    ctx.fillStyle = color === "#2f5d0a" || color === "#6b7f1a" ? "#fff" : "#000";
     ctx.fillText(text, RADIUS - 15, 6);
     ctx.restore();
   });
 }
 
-/* ---------- INPUT ---------- */
+/* INPUT */
+function updateCount() {
+  countEl.textContent = items.length;
+}
+
 function renderList() {
   itemList.innerHTML = "";
   items.forEach((item, i) => {
@@ -69,6 +71,7 @@ function renderList() {
     li.innerHTML = `${item} <button onclick="removeItem(${i})">🗑</button>`;
     itemList.appendChild(li);
   });
+  updateCount();
 }
 
 function addItem() {
@@ -91,7 +94,7 @@ textInput.addEventListener("keydown", e => {
   if (e.key === "Enter") addItem();
 });
 
-/* ---------- SPIN ---------- */
+/* SPIN */
 spinBtn.onclick = () => {
   if (items.length < 2 || spinning) return;
 
@@ -121,7 +124,7 @@ spinBtn.onclick = () => {
   animate();
 };
 
-/* ---------- RESULT ---------- */
+/* RESULT */
 function showResult(text) {
   resultText.textContent = text;
   overlay.classList.remove("hidden");
@@ -138,11 +141,9 @@ hideBtn.onclick = () => {
   overlay.classList.add("hidden");
 };
 
-doneBtn.onclick = () => {
-  overlay.classList.add("hidden");
-};
+doneBtn.onclick = () => overlay.classList.add("hidden");
 
-/* ---------- CONFETTI ---------- */
+/* CONFETTI */
 function launchConfetti() {
   for (let i = 0; i < 80; i++) {
     const c = document.createElement("div");
@@ -151,9 +152,7 @@ function launchConfetti() {
     c.style.top = "-10px";
     c.style.width = "8px";
     c.style.height = "8px";
-    c.style.background =
-      COLORS[Math.floor(Math.random() * COLORS.length)];
-    c.style.opacity = Math.random();
+    c.style.background = COLORS[Math.floor(Math.random() * COLORS.length)];
     document.body.appendChild(c);
 
     c.animate(
@@ -165,6 +164,6 @@ function launchConfetti() {
   }
 }
 
-/* ---------- INIT ---------- */
+/* INIT */
 drawWheel();
 

@@ -10,15 +10,20 @@
 <header class="topbar">
   <div class="logo">
     <div class="logo-icon">
-      <div class="logo-needle"></div>
+      <span>PW</span>
     </div>
-    <span>Picker Wheel</span>
+    <span class="logo-text">Picker Wheel</span>
   </div>
 </header>
 
+<section class="hero">
+  <h1>Picker Wheel</h1>
+  <p>Help you to make a random decision</p>
+</section>
+
 <main class="container">
 
-  <!-- WHEEL AREA -->
+  <!-- WHEEL -->
   <section class="wheel-section">
     <div class="pointer"></div>
     <canvas id="wheel" width="520" height="520"></canvas>
@@ -27,7 +32,10 @@
 
   <!-- INPUT PANEL -->
   <section class="panel">
-    <h3>INPUTS</h3>
+    <div class="panel-header">
+      <h3>INPUTS</h3>
+      <span id="count">0</span>
+    </div>
 
     <div class="input-row">
       <input id="textInput" placeholder="Type and press Enter…" />
@@ -39,12 +47,11 @@
 
 </main>
 
-<!-- RESULT OVERLAY -->
+<!-- RESULT -->
 <div id="resultOverlay" class="overlay hidden">
   <div class="result-box">
     <h1 id="resultText"></h1>
     <p>Selected</p>
-
     <div class="buttons">
       <button id="hideBtn">Hide Choice</button>
       <button id="doneBtn">Done</button>

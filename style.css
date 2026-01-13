@@ -1,6 +1,6 @@
 * {
   box-sizing: border-box;
-  font-family: system-ui, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
@@ -22,29 +22,46 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .logo-icon {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: conic-gradient(
-    #2f5d0a 0deg 180deg,
-    #f2b705 180deg 360deg
+    #2f5d0a 0deg 90deg,
+    #6b7f1a 90deg 180deg,
+    #f2b705 180deg 270deg,
+    #fff1a8 270deg 360deg
   );
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
 }
 
-.logo-needle {
-  position: absolute;
-  width: 2px;
-  height: 14px;
+.logo-icon span {
   background: white;
-  top: 3px;
-  left: 12px;
-  transform-origin: bottom;
-  transform: rotate(-20deg);
+  border-radius: 50%;
+  padding: 2px 4px;
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  background: #bfc9b4;
+  padding: 18px 24px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.hero p {
+  margin: 4px 0 0;
+  font-size: 14px;
 }
 
 /* ---------- LAYOUT ---------- */
@@ -68,24 +85,22 @@ body {
   border-radius: 50%;
 }
 
-/* POINTER (DOWNWARD) */
+/* POINTER */
 .pointer {
   position: absolute;
   top: 6px;
-  width: 0;
-  height: 0;
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
-  border-top: 18px solid #1e1e1e;
+  border-top: 18px solid #111;
   z-index: 3;
 }
 
-/* DROPLET SPIN BUTTON */
+/* SPIN BUTTON */
 #spinBtn {
   position: absolute;
   width: 90px;
   height: 90px;
-  background: #1e1e1e;
+  background: #111;
   color: white;
   border: none;
   font-weight: 700;
@@ -106,36 +121,55 @@ body {
   padding: 16px;
   display: flex;
   flex-direction: column;
+  max-height: 600px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-header span {
+  background: #eee;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
 }
 
 .input-row {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+  margin: 12px 0;
 }
 
 .input-row input {
   flex: 1;
-  padding: 8px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 .input-row button {
-  width: 40px;
+  width: 42px;
   font-size: 20px;
   cursor: pointer;
 }
 
+/* LIST */
 #itemList {
   list-style: none;
   padding: 0;
   margin: 0;
+  overflow-y: auto;
 }
 
 #itemList li {
   display: flex;
   justify-content: space-between;
-  padding: 6px 8px;
+  padding: 8px 10px;
   border-bottom: 1px solid #eee;
+  font-size: 14px;
 }
 
 #itemList button {
@@ -145,7 +179,7 @@ body {
   cursor: pointer;
 }
 
-/* ---------- RESULT OVERLAY ---------- */
+/* ---------- RESULT ---------- */
 .overlay {
   position: fixed;
   inset: 0;
@@ -153,7 +187,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10;
 }
 
 .hidden {
