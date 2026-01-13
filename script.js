@@ -14,6 +14,13 @@ const doneBtn = document.getElementById("doneBtn");
 const SIZE = canvas.width;
 const RADIUS = SIZE / 2;
 
+const COLORS = [
+  "#2f5d0a", // dark green
+  "#6b7f1a", // olive
+  "#f2b705", // yellow
+  "#fff1a8"  // light yellow
+];
+
 let items = [];
 let angle = 0;
 let spinning = false;
@@ -40,7 +47,7 @@ function drawWheel() {
     ctx.beginPath();
     ctx.moveTo(RADIUS, RADIUS);
     ctx.arc(RADIUS, RADIUS, RADIUS, start, end);
-    ctx.fillStyle = `hsl(${(i * 360) / items.length}, 70%, 55%)`;
+    ctx.fillStyle = COLORS[i % COLORS.length];
     ctx.fill();
 
     ctx.save();
@@ -54,7 +61,7 @@ function drawWheel() {
   });
 }
 
-/* ---------- INPUT HANDLING ---------- */
+/* ---------- INPUT ---------- */
 function renderList() {
   itemList.innerHTML = "";
   items.forEach((item, i) => {
@@ -145,7 +152,7 @@ function launchConfetti() {
     c.style.width = "8px";
     c.style.height = "8px";
     c.style.background =
-      ["#f3b41b", "#3a7a1a", "#ffffff"][Math.floor(Math.random() * 3)];
+      COLORS[Math.floor(Math.random() * COLORS.length)];
     c.style.opacity = Math.random();
     document.body.appendChild(c);
 
