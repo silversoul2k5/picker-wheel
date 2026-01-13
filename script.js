@@ -3,50 +3,68 @@ const ctx = canvas.getContext("2d");
 const spinBtn = document.getElementById("spinBtn");
 const inputBox = document.getElementById("inputs");
 
+const SIZE = canvas.width;
+const RADIUS = SIZE / 2;
+
 let angle = 0;
 let spinning = false;
+
+/* ---------- HELPERS ---------- */
 
 function getItems() {
   return inputBox.value
     .split("\n")
-    .map(v => v.trim())
-    .filter(v => v);
+    .map(i => i.trim())
+    .filter(i => i.length > 0);
 }
+
+/* ---------- DRAW WHEEL ---------- */
 
 function drawWheel(items) {
-  const radius = canvas.width / 2;
-  const slice = (2 * Math.PI) / items.length;
+  ctx.clearRect(0, 0, SIZE, SIZE);
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.save();
-  ctx.translate(radius, radius);
-  ctx.rotate(angle);
-
-  items.forEach((text, i) => {
+  if (items.length === 0) {
+    // empty state
     ctx.beginPath();
+    ctx.arc(RADIUS, RADIUS, RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    return;
+  }
+
+  const slice = (Math.PI * 2) / items.length;
+
+  items.forEach((item, i) => {
+    const start = angle + i * slice;
+    const end = start + slice;
+
+    // slice
+    ctx.beginPath();
+    ctx.moveTo(RADIUS, RADIUS);
+    ctx.arc(RADIUS, RADIUS, RADIUS, start, end);
     ctx.fillStyle = `hsl(${(i * 360) / items.length}, 70%, 55%)`;
-    ctx.moveTo(0, 0);
-    ctx.arc(0, 0, radius, slice * i, slice * (i + 1));
     ctx.fill();
 
-    ctx.rotate(slice / 2);
-    ctx.fillStyle = "#000";
-    ctx.font = "16px sans-serif";
+    // text
+    ctx.save();
+    ctx.translate(RADIUS, RADIUS);
+    ctx.rotate(start + slice / 2);
     ctx.textAlign = "right";
-    ctx.fillText(text, radius - 15, 5);
-    ctx.rotate(-slice / 2);
+    ctx.fillStyle = "#000";
+    ctx.font = "16px system-ui";
+    ctx.fillText(item, RADIUS - 15, 6);
+    ctx.restore();
   });
-
-  ctx.restore();
 }
 
-function spin() {
-  if (spinning) return;
+/* ---------- SPIN ---------- */
+
+function spinWheel() {
   const items = getItems();
-  if (items.length < 2) return alert("Enter at least 2 items");
+  if (items.length < 2 || spinning) return;
 
   spinning = true;
-  let velocity = Math.random() * 0.35 + 0.4;
+  let velocity = Math.random() * 0.4 + 0.5;
 
   function animate() {
     velocity *= 0.985;
@@ -55,10 +73,13 @@ function spin() {
 
     if (velocity < 0.002) {
       spinning = false;
-      const slice = (2 * Math.PI) / items.length;
+
+      const slice = (Math.PI * 2) / items.length;
       const index =
         items.length -
-        Math.floor((angle % (2 * Math.PI)) / slice) - 1;
+        Math.floor((angle % (Math.PI * 2)) / slice) -
+        1;
+
       alert("Selected: " + items[index]);
       return;
     }
@@ -68,6 +89,11 @@ function spin() {
   animate();
 }
 
-spinBtn.onclick = spin;
-inputBox.oninput = () => drawWheel(getItems());
+/* ---------- EVENTS ---------- */
+
+spinBtn.addEventListener("click", spinWheel);
+inputBox.addEventListener("input", () => drawWheel(getItems()));
+
+/* ---------- INITIAL DRAW ---------- */
+drawWheel([]);
 
