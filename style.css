@@ -8,6 +8,7 @@ body {
   background: #cfd7c4;
 }
 
+/* TOP BAR */
 .topbar {
   height: 56px;
   background: white;
@@ -18,6 +19,7 @@ body {
   border-bottom: 1px solid #ddd;
 }
 
+/* LAYOUT */
 .container {
   display: grid;
   grid-template-columns: 1fr 420px;
@@ -25,6 +27,7 @@ body {
   padding: 24px;
 }
 
+/* WHEEL */
 .wheel-section {
   position: relative;
   display: flex;
@@ -37,18 +40,38 @@ body {
   border-radius: 50%;
 }
 
+/* POINTER */
+.pointer {
+  position: absolute;
+  top: -6px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 18px solid #1e1e1e;
+  z-index: 2;
+}
+
+/* SPIN BUTTON (DROPLET) */
 #spinBtn {
   position: absolute;
   width: 90px;
   height: 90px;
-  border-radius: 50%;
   background: #1e1e1e;
   color: white;
   border: none;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  transform: rotate(45deg);
 }
 
+#spinBtn span {
+  display: inline-block;
+  transform: rotate(-45deg);
+}
+
+/* INPUT PANEL */
 .panel {
   background: white;
   border-radius: 12px;
@@ -66,7 +89,6 @@ body {
 .input-row input {
   flex: 1;
   padding: 8px;
-  font-size: 14px;
 }
 
 .input-row button {
@@ -93,5 +115,53 @@ body {
   border: none;
   color: red;
   cursor: pointer;
+}
+
+/* RESULT OVERLAY */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.hidden {
+  display: none;
+}
+
+.result-box {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  border: 4px solid #3a7a1a;
+}
+
+.result-box h1 {
+  font-size: 48px;
+  margin: 0;
+}
+
+.buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+#hideBtn {
+  background: white;
+  border: 1px solid #aaa;
+  padding: 8px 16px;
+}
+
+#doneBtn {
+  background: #f3b41b;
+  border: none;
+  padding: 8px 20px;
+  font-weight: bold;
 }
 

@@ -1,10 +1,15 @@
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
-const spinBtn = document.getElementById("spinBtn");
 
+const spinBtn = document.getElementById("spinBtn");
 const textInput = document.getElementById("textInput");
 const addBtn = document.getElementById("addBtn");
 const itemList = document.getElementById("itemList");
+
+const overlay = document.getElementById("resultOverlay");
+const resultText = document.getElementById("resultText");
+const hideBtn = document.getElementById("hideBtn");
+const doneBtn = document.getElementById("doneBtn");
 
 const SIZE = canvas.width;
 const RADIUS = SIZE / 2;
@@ -51,10 +56,18 @@ function drawWheel() {
 
 /* ---------- INPUT HANDLING ---------- */
 
+function renderList() {
+  itemList.innerHTML = "";
+  items.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `${item} <button onclick="removeItem(${i})">🗑</button>`;
+    itemList.appendChild(li);
+  });
+}
+
 function addItem() {
   const value = textInput.value.trim();
   if (!value) return;
-
   items.push(value);
   textInput.value = "";
   renderList();
@@ -65,15 +78,6 @@ function removeItem(index) {
   items.splice(index, 1);
   renderList();
   drawWheel();
-}
-
-function renderList() {
-  itemList.innerHTML = "";
-  items.forEach((item, i) => {
-    const li = document.createElement("li");
-    li.innerHTML = `${item} <button onclick="removeItem(${i})">🗑</button>`;
-    itemList.appendChild(li);
-  });
 }
 
 addBtn.onclick = addItem;
@@ -96,12 +100,14 @@ spinBtn.onclick = () => {
 
     if (velocity < 0.002) {
       spinning = false;
+
       const slice = (Math.PI * 2) / items.length;
-      const index =
-        items.length -
-        Math.floor((angle % (Math.PI * 2)) / slice) -
-        1;
-      alert("Selected: " + items[index]);
+      const normalized =
+        (Math.PI * 1.5 - (angle % (Math.PI * 2)) + Math.PI * 2) %
+        (Math.PI * 2);
+
+      const index = Math.floor(normalized / slice);
+      showResult(items[index]);
       return;
     }
     requestAnimationFrame(animate);
@@ -109,6 +115,40 @@ spinBtn.onclick = () => {
 
   animate();
 };
+
+/* ---------- RESULT ---------- */
+
+function showResult(text) {
+  resultText.textContent = text;
+  overlay.classList.remove("hidden");
+  launchConfetti();
+}
+
+hideBtn.onclick = () => overlay.classList.add("hidden");
+doneBtn.onclick = () => overlay.classList.add("hidden");
+
+/* ---------- CONFETTI ---------- */
+
+function launchConfetti() {
+  for (let i = 0; i < 80; i++) {
+    const c = document.createElement("div");
+    c.style.position = "fixed";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.top = "-10px";
+    c.style.width = "8px";
+    c.style.height = "8px";
+    c.style.background = ["#f3b41b", "#3a7a1a", "#fff"][Math.floor(Math.random() * 3)];
+    c.style.opacity = Math.random();
+    document.body.appendChild(c);
+
+    c.animate(
+      [{ transform: "translateY(0)" }, { transform: "translateY(110vh)" }],
+      { duration: 1500 + Math.random() * 1000, easing: "ease-out" }
+    );
+
+    setTimeout(() => c.remove(), 2500);
+  }
+}
 
 /* ---------- INIT ---------- */
 drawWheel();

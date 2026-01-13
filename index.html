@@ -11,10 +11,11 @@
 
 <main class="container">
 
-  <!-- WHEEL -->
+  <!-- WHEEL AREA -->
   <section class="wheel-section">
-    <canvas id="wheel" width="500" height="500"></canvas>
-    <button id="spinBtn">SPIN</button>
+    <div class="pointer"></div>
+    <canvas id="wheel" width="520" height="520"></canvas>
+    <button id="spinBtn"><span>SPIN</span></button>
   </section>
 
   <!-- INPUT PANEL -->
@@ -22,7 +23,7 @@
     <h3>INPUTS</h3>
 
     <div class="input-row">
-      <input id="textInput" placeholder="Type and press Enter..." />
+      <input id="textInput" placeholder="Type and press Enter…" />
       <button id="addBtn">+</button>
     </div>
 
@@ -30,6 +31,19 @@
   </section>
 
 </main>
+
+<!-- RESULT OVERLAY -->
+<div id="resultOverlay" class="overlay hidden">
+  <div class="result-box">
+    <h1 id="resultText"></h1>
+    <p>Selected</p>
+
+    <div class="buttons">
+      <button id="hideBtn">Hide Choice</button>
+      <button id="doneBtn">Done</button>
+    </div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
