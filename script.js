@@ -14,18 +14,36 @@ const doneBtn = document.getElementById("doneBtn");
 
 const SIZE = canvas.width;
 const RADIUS = SIZE / 2;
+
 const COLORS = ["#2f5d0a", "#6b7f1a", "#f2b705", "#fff1a8"];
 
-let items = ["YES", "NO", "YES", "NO", "YES", "NO", "YES", "NO", "Arjun"];
+/* =======================
+   SECRET BIAS CONFIG
+   ======================= */
+const ARJUN_WEIGHT = 3;          // Adjustable bias (base)
+const EARLY_BIAS_MULT = 1.6;     // Time-based multiplier
+const EARLY_BIAS_MS = 2 * 60e3;  // First 2 minutes
+const GUARANTEE_SPINS = 3;       // First-3-spins guarantee
+
+/* =======================
+   STATE
+   ======================= */
+let items = ["YES", "NO", "YES", "NO", "YES", "NO", "YES", "NO"];
 let angle = 0;
 let spinning = false;
 let idleSpin = true;
+let lastSelectedIndex = null;
 
 let spinCount = 0;
+const sessionStart = Date.now();
 
-/* ---------- DRAW ---------- */
+/* =======================
+   DRAW
+   ======================= */
 function drawWheel() {
   ctx.clearRect(0, 0, SIZE, SIZE);
+  if (items.length === 0) return;
+
   const slice = (Math.PI * 2) / items.length;
 
   items.forEach((text, i) => {
@@ -44,86 +62,182 @@ function drawWheel() {
     ctx.rotate(start + slice / 2);
     ctx.textAlign = "right";
     ctx.font = "bold 22px system-ui";
-    ctx.fillStyle = color === COLORS[0] || color === COLORS[1] ? "#fff" : "#000";
+    ctx.fillStyle =
+      color === "#2f5d0a" || color === "#6b7f1a" ? "#fff" : "#000";
     ctx.fillText(text, RADIUS - 18, 8);
     ctx.restore();
   });
 }
 
-/* ---------- IDLE ---------- */
-function idle() {
+/* =======================
+   IDLE ROTATION
+   ======================= */
+function idleRotate() {
   if (!spinning && idleSpin) {
     angle += 0.002;
     drawWheel();
   }
-  requestAnimationFrame(idle);
+  requestAnimationFrame(idleRotate);
 }
 
-/* ---------- SECRET PICK ---------- */
-function pickTargetIndex() {
-  const arjunIndex = items.findIndex(i => i.toLowerCase() === "arjun");
+/* =======================
+   INPUT
+   ======================= */
+function updateCount() {
+  countEl.textContent = items.length;
+}
 
-  if (arjunIndex !== -1 && spinCount < 3) {
+function renderList() {
+  itemList.innerHTML = "";
+  items.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `${item} <button onclick="removeItem(${i})">🗑</button>`;
+    itemList.appendChild(li);
+  });
+  updateCount();
+}
+
+function addItem() {
+  const value = textInput.value.trim();
+  if (!value) return;
+  items.push(value);
+  textInput.value = "";
+  renderList();
+  drawWheel();
+}
+
+function removeItem(index) {
+  items.splice(index, 1);
+  renderList();
+  drawWheel();
+}
+
+addBtn.onclick = addItem;
+textInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") addItem();
+});
+
+/* =======================
+   WEIGHTED PICK (SECRET)
+   ======================= */
+function pickIndexWithBias() {
+  const now = Date.now();
+  const earlyFactor =
+    now - sessionStart < EARLY_BIAS_MS ? EARLY_BIAS_MULT : 1;
+
+  const arjunIndex = items.findIndex(
+    i => i.toLowerCase() === "arjun"
+  );
+
+  /* First-3-spins guarantee */
+  if (arjunIndex !== -1 && spinCount < GUARANTEE_SPINS) {
     spinCount++;
     return arjunIndex;
   }
 
+  const weights = items.map(item =>
+    item.toLowerCase() === "arjun"
+      ? ARJUN_WEIGHT * earlyFactor
+      : 1
+  );
+
+  const total = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+
+  for (let i = 0; i < weights.length; i++) {
+    r -= weights[i];
+    if (r <= 0) {
+      spinCount++;
+      return i;
+    }
+  }
+
   spinCount++;
-  return Math.floor(Math.random() * items.length);
+  return 0;
 }
 
-/* ---------- SPIN ---------- */
+/* =======================
+   SPIN
+   ======================= */
 spinBtn.onclick = () => {
-  if (spinning || items.length < 2) return;
+  if (items.length < 2 || spinning) return;
 
   spinning = true;
   idleSpin = false;
 
-  const targetIndex = pickTargetIndex();
+  const targetIndex = pickIndexWithBias();
   const slice = (Math.PI * 2) / items.length;
-
-  const extraSpins = 6 + Math.random() * 3;
   const targetAngle =
-    extraSpins * Math.PI * 2 +
-    (Math.PI * 1.5 - (targetIndex + 0.5) * slice);
+    Math.PI * 1.5 - (targetIndex + 0.5) * slice;
 
-  const startAngle = angle;
-  const duration = 4000;
-  const startTime = performance.now();
+  let velocity = Math.random() * 0.5 + 0.6;
 
-  function easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
-  }
-
-  function animate(time) {
-    const elapsed = time - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = easeOutCubic(progress);
-
-    angle = startAngle + (targetAngle - startAngle) * eased;
+  function animate() {
+    velocity *= 0.985;
+    angle += velocity;
     drawWheel();
 
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
+    if (velocity < 0.002) {
       spinning = false;
       idleSpin = true;
+      angle = targetAngle;
+      lastSelectedIndex = targetIndex;
+      drawWheel();
       showResult(items[targetIndex]);
+      return;
     }
+    requestAnimationFrame(animate);
   }
 
-  requestAnimationFrame(animate);
+  animate();
 };
 
-/* ---------- RESULT ---------- */
+/* =======================
+   RESULT
+   ======================= */
 function showResult(text) {
   resultText.textContent = text;
   overlay.classList.remove("hidden");
+  launchConfetti();
 }
+
+hideBtn.onclick = () => {
+  if (lastSelectedIndex !== null) {
+    items.splice(lastSelectedIndex, 1);
+    lastSelectedIndex = null;
+    renderList();
+    drawWheel();
+  }
+  overlay.classList.add("hidden");
+};
 
 doneBtn.onclick = () => overlay.classList.add("hidden");
 
-/* ---------- INIT ---------- */
+/* =======================
+   CONFETTI
+   ======================= */
+function launchConfetti() {
+  for (let i = 0; i < 80; i++) {
+    const c = document.createElement("div");
+    c.style.position = "fixed";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.top = "-10px";
+    c.style.width = "8px";
+    c.style.height = "8px";
+    c.style.background = COLORS[Math.floor(Math.random() * COLORS.length)];
+    document.body.appendChild(c);
+
+    c.animate(
+      [{ transform: "translateY(0)" }, { transform: "translateY(110vh)" }],
+      { duration: 1500 + Math.random() * 1000, easing: "ease-out" }
+    );
+
+    setTimeout(() => c.remove(), 2500);
+  }
+}
+
+/* INIT */
+renderList();
 drawWheel();
-idle();
+idleRotate();
 
