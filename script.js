@@ -17,7 +17,7 @@ const RADIUS = SIZE / 2;
 
 const COLORS = ["#2f5d0a", "#6b7f1a", "#f2b705", "#fff1a8"];
 
-/* DEFAULT ITEMS LIKE IMAGE */
+/* DEFAULT ITEMS */
 let items = ["YES", "NO", "YES", "NO", "YES", "NO", "YES", "NO"];
 
 let angle = 0;
@@ -25,10 +25,9 @@ let spinning = false;
 let idleSpin = true;
 let lastSelectedIndex = null;
 
-/* DRAW WHEEL */
+/* ---------- DRAW ---------- */
 function drawWheel() {
   ctx.clearRect(0, 0, SIZE, SIZE);
-
   const slice = (Math.PI * 2) / items.length;
 
   items.forEach((text, i) => {
@@ -54,7 +53,7 @@ function drawWheel() {
   });
 }
 
-/* IDLE SPIN */
+/* ---------- IDLE SPIN ---------- */
 function idleRotate() {
   if (!spinning && idleSpin) {
     angle += 0.002;
@@ -63,7 +62,7 @@ function idleRotate() {
   requestAnimationFrame(idleRotate);
 }
 
-/* INPUT */
+/* ---------- INPUT ---------- */
 function updateCount() {
   countEl.textContent = items.length;
 }
@@ -98,12 +97,36 @@ textInput.addEventListener("keydown", e => {
   if (e.key === "Enter") addItem();
 });
 
-/* SPIN */
+/* ---------- SECRET WEIGHTED RANDOM ---------- */
+function weightedPickIndex() {
+  const weights = items.map(item =>
+    item.toLowerCase() === "arjun" ? 3 : 1
+  );
+
+  const total = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+
+  for (let i = 0; i < weights.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return i;
+  }
+  return 0;
+}
+
+/* ---------- SPIN ---------- */
 spinBtn.onclick = () => {
   if (items.length < 2 || spinning) return;
 
   spinning = true;
   idleSpin = false;
+
+  /* secretly decide winner */
+  const targetIndex = weightedPickIndex();
+  const slice = (Math.PI * 2) / items.length;
+
+  /* land that slice at top */
+  const targetAngle =
+    Math.PI * 1.5 - (targetIndex + 0.5) * slice;
 
   let velocity = Math.random() * 0.5 + 0.6;
 
@@ -116,12 +139,9 @@ spinBtn.onclick = () => {
       spinning = false;
       idleSpin = true;
 
-      const slice = (Math.PI * 2) / items.length;
-      const normalized =
-        (Math.PI * 1.5 - (angle % (Math.PI * 2)) + Math.PI * 2) %
-        (Math.PI * 2);
-
-      lastSelectedIndex = Math.floor(normalized / slice);
+      angle = targetAngle;
+      lastSelectedIndex = targetIndex;
+      drawWheel();
       showResult(items[lastSelectedIndex]);
       return;
     }
@@ -131,7 +151,7 @@ spinBtn.onclick = () => {
   animate();
 };
 
-/* RESULT */
+/* ---------- RESULT ---------- */
 function showResult(text) {
   resultText.textContent = text;
   overlay.classList.remove("hidden");
@@ -150,7 +170,7 @@ hideBtn.onclick = () => {
 
 doneBtn.onclick = () => overlay.classList.add("hidden");
 
-/* CONFETTI */
+/* ---------- CONFETTI ---------- */
 function launchConfetti() {
   for (let i = 0; i < 80; i++) {
     const c = document.createElement("div");
@@ -171,7 +191,7 @@ function launchConfetti() {
   }
 }
 
-/* INIT */
+/* ---------- INIT ---------- */
 renderList();
 drawWheel();
 idleRotate();

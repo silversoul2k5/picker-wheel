@@ -8,7 +8,6 @@ body {
   background: #cfd7c4;
 }
 
-/* TOP BAR */
 .topbar {
   height: 56px;
   background: white;
@@ -47,7 +46,6 @@ body {
   padding: 2px 4px;
 }
 
-/* HERO */
 .hero {
   background: #bfc9b4;
   padding: 18px 24px;
@@ -63,7 +61,6 @@ body {
   font-size: 14px;
 }
 
-/* LAYOUT */
 .container {
   display: grid;
   grid-template-columns: 1fr 420px;
@@ -71,7 +68,6 @@ body {
   padding: 24px;
 }
 
-/* WHEEL */
 .wheel-section {
   position: relative;
   display: flex;
@@ -84,7 +80,6 @@ body {
   border-radius: 50%;
 }
 
-/* POINTER */
 .pointer {
   position: absolute;
   top: 6px;
@@ -94,7 +89,6 @@ body {
   z-index: 3;
 }
 
-/* SPIN BUTTON */
 #spinBtn {
   position: absolute;
   width: 90px;
@@ -113,7 +107,6 @@ body {
   transform: rotate(-45deg);
 }
 
-/* PANEL */
 .panel {
   background: white;
   border-radius: 12px;
@@ -177,7 +170,6 @@ body {
   cursor: pointer;
 }
 
-/* RESULT */
 .overlay {
   position: fixed;
   inset: 0;
