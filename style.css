@@ -178,9 +178,7 @@ body {
   border: 4px solid #2f5d0a;
 }
 
-.result-box h1 {
-  font-size: 48px;
-}
+.result-box h1 { font-size: 48px; }
 
 .buttons {
   margin-top: 20px;

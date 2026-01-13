@@ -17,8 +17,14 @@ const RADIUS = SIZE / 2;
 
 const COLORS = ["#2f5d0a", "#6b7f1a", "#f2b705", "#fff1a8"];
 
-/* SECRET BIAS */
-const ARJUN_WEIGHT = 3;
+/* ======================
+   BIAS & EDGE CONFIG
+   ====================== */
+const ARJUN_WEIGHT = 3;     // probability boost
+const EDGE_BAND = 0.35;     // fraction of slice from center toward edges
+const NEAR_MISS_PROB = 0.18;// chance to cross boundary
+const EXTRA_ROT_MIN = 6;   // fast spins
+const EXTRA_ROT_MAX = 9;
 
 /* STATE */
 let items = ["YES", "NO", "YES", "NO", "YES", "NO", "YES", "NO"];
@@ -29,6 +35,8 @@ let lastSelectedIndex = null;
 /* DRAW */
 function drawWheel() {
   ctx.clearRect(0, 0, SIZE, SIZE);
+  if (items.length === 0) return;
+
   const slice = (Math.PI * 2) / items.length;
 
   items.forEach((text, i) => {
@@ -88,10 +96,8 @@ function weightedPick() {
   const weights = items.map(i =>
     i.toLowerCase() === "arjun" ? ARJUN_WEIGHT : 1
   );
-
   let total = weights.reduce((a, b) => a + b, 0);
   let r = Math.random() * total;
-
   for (let i = 0; i < weights.length; i++) {
     r -= weights[i];
     if (r <= 0) return i;
@@ -99,21 +105,43 @@ function weightedPick() {
   return 0;
 }
 
-/* CLOCKWISE FAST SPIN */
+/* SPIN: CLOCKWISE, FAST, EDGE-BASED */
 spinBtn.onclick = () => {
   if (spinning || items.length < 2) return;
   spinning = true;
 
-  const targetIndex = weightedPick();
   const slice = (Math.PI * 2) / items.length;
 
-  const extraRotations = Math.floor(Math.random() * 4) + 6; // FAST spins
-  const finalAngle =
-    angle +
-    extraRotations * Math.PI * 2 +
-    (Math.PI * 1.5 - (targetIndex + 0.5) * slice - angle % (Math.PI * 2));
+  // pick winner by probability
+  let targetIndex = weightedPick();
+
+  // optional near-miss: cross boundary to neighbor
+  if (Math.random() < NEAR_MISS_PROB) {
+    const dir = Math.random() < 0.5 ? -1 : 1;
+    targetIndex = (targetIndex + dir + items.length) % items.length;
+  }
+
+  // edge offset inside slice (toward edges, not center)
+  const half = slice / 2;
+  const edgeOffset =
+    (Math.random() < 0.5 ? -1 : 1) *
+    (half * EDGE_BAND * (0.6 + Math.random() * 0.4));
+
+  // final pointer-aligned angle (12 o’clock)
+  const baseTarget =
+    Math.PI * 1.5 - (targetIndex + 0.5) * slice + edgeOffset;
+
+  // ensure clockwise-only with extra full rotations
+  const extraRot =
+    (Math.floor(Math.random() * (EXTRA_ROT_MAX - EXTRA_ROT_MIN + 1)) + EXTRA_ROT_MIN) *
+    Math.PI * 2;
 
   const startAngle = angle;
+  const finalAngle =
+    angle +
+    extraRot +
+    (baseTarget - (angle % (Math.PI * 2)));
+
   const duration = 3200;
   const startTime = performance.now();
 
