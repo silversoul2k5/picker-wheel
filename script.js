@@ -17,9 +17,9 @@ const RADIUS = SIZE / 2;
 let items = [];
 let angle = 0;
 let spinning = false;
+let lastSelectedIndex = null;
 
 /* ---------- DRAW WHEEL ---------- */
-
 function drawWheel() {
   ctx.clearRect(0, 0, SIZE, SIZE);
 
@@ -55,7 +55,6 @@ function drawWheel() {
 }
 
 /* ---------- INPUT HANDLING ---------- */
-
 function renderList() {
   itemList.innerHTML = "";
   items.forEach((item, i) => {
@@ -86,7 +85,6 @@ textInput.addEventListener("keydown", e => {
 });
 
 /* ---------- SPIN ---------- */
-
 spinBtn.onclick = () => {
   if (items.length < 2 || spinning) return;
 
@@ -106,8 +104,8 @@ spinBtn.onclick = () => {
         (Math.PI * 1.5 - (angle % (Math.PI * 2)) + Math.PI * 2) %
         (Math.PI * 2);
 
-      const index = Math.floor(normalized / slice);
-      showResult(items[index]);
+      lastSelectedIndex = Math.floor(normalized / slice);
+      showResult(items[lastSelectedIndex]);
       return;
     }
     requestAnimationFrame(animate);
@@ -117,18 +115,27 @@ spinBtn.onclick = () => {
 };
 
 /* ---------- RESULT ---------- */
-
 function showResult(text) {
   resultText.textContent = text;
   overlay.classList.remove("hidden");
   launchConfetti();
 }
 
-hideBtn.onclick = () => overlay.classList.add("hidden");
-doneBtn.onclick = () => overlay.classList.add("hidden");
+hideBtn.onclick = () => {
+  if (lastSelectedIndex !== null) {
+    items.splice(lastSelectedIndex, 1);
+    lastSelectedIndex = null;
+    renderList();
+    drawWheel();
+  }
+  overlay.classList.add("hidden");
+};
+
+doneBtn.onclick = () => {
+  overlay.classList.add("hidden");
+};
 
 /* ---------- CONFETTI ---------- */
-
 function launchConfetti() {
   for (let i = 0; i < 80; i++) {
     const c = document.createElement("div");
@@ -137,7 +144,8 @@ function launchConfetti() {
     c.style.top = "-10px";
     c.style.width = "8px";
     c.style.height = "8px";
-    c.style.background = ["#f3b41b", "#3a7a1a", "#fff"][Math.floor(Math.random() * 3)];
+    c.style.background =
+      ["#f3b41b", "#3a7a1a", "#ffffff"][Math.floor(Math.random() * 3)];
     c.style.opacity = Math.random();
     document.body.appendChild(c);
 

@@ -40,19 +40,19 @@ body {
   border-radius: 50%;
 }
 
-/* POINTER */
+/* POINTER (POINTING DOWN INTO WHEEL) */
 .pointer {
   position: absolute;
-  top: -6px;
+  top: 6px;
   width: 0;
   height: 0;
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
-  border-bottom: 18px solid #1e1e1e;
-  z-index: 2;
+  border-top: 18px solid #1e1e1e;
+  z-index: 3;
 }
 
-/* SPIN BUTTON (DROPLET) */
+/* SPIN BUTTON – WATER DROPLET */
 #spinBtn {
   position: absolute;
   width: 90px;
