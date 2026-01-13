@@ -18,12 +18,16 @@ const RADIUS = SIZE / 2;
 const COLORS = ["#2f5d0a", "#6b7f1a", "#f2b705", "#fff1a8"];
 
 /* ======================
-   BIAS & EDGE CONFIG
+   SECRET BIAS CONFIG
    ====================== */
-const ARJUN_WEIGHT = 3;     // probability boost
-const EDGE_BAND = 0.35;     // fraction of slice from center toward edges
-const NEAR_MISS_PROB = 0.18;// chance to cross boundary
-const EXTRA_ROT_MIN = 6;   // fast spins
+const WEIGHT_ARJUN  = 5;   // highest
+const WEIGHT_KAILAS = 3;   // medium
+const WEIGHT_OTHER  = 1;   // normal
+
+/* EDGE / REALISM */
+const EDGE_BAND = 0.35;      // stop closer to edges
+const NEAR_MISS_PROB = 0.18; // chance to cross boundary
+const EXTRA_ROT_MIN = 6;     // fast spins
 const EXTRA_ROT_MAX = 9;
 
 /* STATE */
@@ -91,13 +95,18 @@ function removeItem(i) {
 addBtn.onclick = addItem;
 textInput.addEventListener("keydown", e => e.key === "Enter" && addItem());
 
-/* WEIGHTED PICK */
+/* WEIGHTED PICK: Arjun > Kailas > Others */
 function weightedPick() {
-  const weights = items.map(i =>
-    i.toLowerCase() === "arjun" ? ARJUN_WEIGHT : 1
-  );
+  const weights = items.map(name => {
+    const n = name.toLowerCase();
+    if (n === "arjun")  return WEIGHT_ARJUN;
+    if (n === "kailas") return WEIGHT_KAILAS;
+    return WEIGHT_OTHER;
+  });
+
   let total = weights.reduce((a, b) => a + b, 0);
   let r = Math.random() * total;
+
   for (let i = 0; i < weights.length; i++) {
     r -= weights[i];
     if (r <= 0) return i;
@@ -105,33 +114,33 @@ function weightedPick() {
   return 0;
 }
 
-/* SPIN: CLOCKWISE, FAST, EDGE-BASED */
+/* SPIN: CLOCKWISE, FAST, EDGE-BASED + NEAR MISS */
 spinBtn.onclick = () => {
   if (spinning || items.length < 2) return;
   spinning = true;
 
   const slice = (Math.PI * 2) / items.length;
 
-  // pick winner by probability
+  // probabilistic winner
   let targetIndex = weightedPick();
 
-  // optional near-miss: cross boundary to neighbor
+  // near-miss (cross boundary)
   if (Math.random() < NEAR_MISS_PROB) {
     const dir = Math.random() < 0.5 ? -1 : 1;
     targetIndex = (targetIndex + dir + items.length) % items.length;
   }
 
-  // edge offset inside slice (toward edges, not center)
+  // edge offset (avoid dead center)
   const half = slice / 2;
   const edgeOffset =
     (Math.random() < 0.5 ? -1 : 1) *
     (half * EDGE_BAND * (0.6 + Math.random() * 0.4));
 
-  // final pointer-aligned angle (12 o’clock)
+  // pointer alignment (12 o’clock)
   const baseTarget =
     Math.PI * 1.5 - (targetIndex + 0.5) * slice + edgeOffset;
 
-  // ensure clockwise-only with extra full rotations
+  // clockwise-only extra rotations
   const extraRot =
     (Math.floor(Math.random() * (EXTRA_ROT_MAX - EXTRA_ROT_MIN + 1)) + EXTRA_ROT_MIN) *
     Math.PI * 2;
