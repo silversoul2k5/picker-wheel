@@ -8,7 +8,7 @@ body {
   background: #cfd7c4;
 }
 
-/* ---------- TOP BAR ---------- */
+/* TOP BAR */
 .topbar {
   height: 56px;
   background: white;
@@ -39,7 +39,6 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 10px;
-  font-weight: 800;
 }
 
 .logo-icon span {
@@ -48,7 +47,7 @@ body {
   padding: 2px 4px;
 }
 
-/* ---------- HERO ---------- */
+/* HERO */
 .hero {
   background: #bfc9b4;
   padding: 18px 24px;
@@ -64,7 +63,7 @@ body {
   font-size: 14px;
 }
 
-/* ---------- LAYOUT ---------- */
+/* LAYOUT */
 .container {
   display: grid;
   grid-template-columns: 1fr 420px;
@@ -72,7 +71,7 @@ body {
   padding: 24px;
 }
 
-/* ---------- WHEEL ---------- */
+/* WHEEL */
 .wheel-section {
   position: relative;
   display: flex;
@@ -103,7 +102,7 @@ body {
   background: #111;
   color: white;
   border: none;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   transform: rotate(45deg);
@@ -114,7 +113,7 @@ body {
   transform: rotate(-45deg);
 }
 
-/* ---------- INPUT PANEL ---------- */
+/* PANEL */
 .panel {
   background: white;
   border-radius: 12px;
@@ -156,7 +155,6 @@ body {
   cursor: pointer;
 }
 
-/* LIST */
 #itemList {
   list-style: none;
   padding: 0;
@@ -179,7 +177,7 @@ body {
   cursor: pointer;
 }
 
-/* ---------- RESULT ---------- */
+/* RESULT */
 .overlay {
   position: fixed;
   inset: 0;

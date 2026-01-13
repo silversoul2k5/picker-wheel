@@ -17,29 +17,23 @@ const RADIUS = SIZE / 2;
 
 const COLORS = ["#2f5d0a", "#6b7f1a", "#f2b705", "#fff1a8"];
 
-let items = [];
+/* DEFAULT ITEMS LIKE IMAGE */
+let items = ["YES", "NO", "YES", "NO", "YES", "NO", "YES", "NO"];
+
 let angle = 0;
 let spinning = false;
+let idleSpin = true;
 let lastSelectedIndex = null;
 
 /* DRAW WHEEL */
 function drawWheel() {
   ctx.clearRect(0, 0, SIZE, SIZE);
 
-  if (items.length === 0) {
-    ctx.beginPath();
-    ctx.arc(RADIUS, RADIUS, RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = "#fff";
-    ctx.fill();
-    return;
-  }
-
   const slice = (Math.PI * 2) / items.length;
 
   items.forEach((text, i) => {
     const start = angle + i * slice;
     const end = start + slice;
-
     const color = COLORS[i % COLORS.length];
 
     ctx.beginPath();
@@ -52,11 +46,21 @@ function drawWheel() {
     ctx.translate(RADIUS, RADIUS);
     ctx.rotate(start + slice / 2);
     ctx.textAlign = "right";
-    ctx.font = "18px system-ui";
-    ctx.fillStyle = color === "#2f5d0a" || color === "#6b7f1a" ? "#fff" : "#000";
-    ctx.fillText(text, RADIUS - 15, 6);
+    ctx.font = "bold 22px system-ui";
+    ctx.fillStyle =
+      color === "#2f5d0a" || color === "#6b7f1a" ? "#fff" : "#000";
+    ctx.fillText(text, RADIUS - 18, 8);
     ctx.restore();
   });
+}
+
+/* IDLE SPIN */
+function idleRotate() {
+  if (!spinning && idleSpin) {
+    angle += 0.002;
+    drawWheel();
+  }
+  requestAnimationFrame(idleRotate);
 }
 
 /* INPUT */
@@ -99,7 +103,9 @@ spinBtn.onclick = () => {
   if (items.length < 2 || spinning) return;
 
   spinning = true;
-  let velocity = Math.random() * 0.4 + 0.5;
+  idleSpin = false;
+
+  let velocity = Math.random() * 0.5 + 0.6;
 
   function animate() {
     velocity *= 0.985;
@@ -108,6 +114,7 @@ spinBtn.onclick = () => {
 
     if (velocity < 0.002) {
       spinning = false;
+      idleSpin = true;
 
       const slice = (Math.PI * 2) / items.length;
       const normalized =
@@ -165,5 +172,7 @@ function launchConfetti() {
 }
 
 /* INIT */
+renderList();
 drawWheel();
+idleRotate();
 
